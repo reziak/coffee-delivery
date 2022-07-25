@@ -8,8 +8,20 @@ import {
 } from './styles'
 
 import deliveryGuy from '../../assets/coffee-delivery-delivery-guy.svg'
+import { useContext } from 'react'
+import { OrderContext } from '../../contexts/OrderContext'
 
 export const Success = () => {
+  const { order } = useContext(OrderContext)
+  const { address, buildingNumber, neighborhood, city, state, paymentOption } =
+    order.client
+
+  const payment = {
+    credit: 'Cartão de crédito',
+    debit: 'Cartão de débito',
+    money: 'Dinheiro',
+  }
+
   return (
     <SuccessContainer>
       <ConfirmationContainer>
@@ -23,9 +35,9 @@ export const Success = () => {
               </span>
               <div>
                 <p>
-                  Entrega em <strong>Rua João Daniel Martinelli, 102</strong>
+                  Entrega em <strong>{`${address}, ${buildingNumber}`}</strong>
                 </p>
-                <p>Farrapos - Porto Alegre, RS</p>
+                <p>{`${neighborhood} - ${city}, ${state}`}</p>
               </div>
             </ClientInformationItem>
             <ClientInformationItem>
@@ -46,7 +58,7 @@ export const Success = () => {
               <div>
                 <p>Pagamento na entrega</p>
                 <p>
-                  <strong>Cartão de Crédito</strong>
+                  <strong>{paymentOption && payment[paymentOption]}</strong>
                 </p>
               </div>
             </ClientInformationItem>

@@ -4,37 +4,24 @@ import React from 'react'
 import { CounterContainer } from './styles'
 
 interface CounterProps {
-  counter: number
-  setCounter: React.Dispatch<React.SetStateAction<number>>
+  value: number
+  incrementor: () => void
+  decrementor: () => void
 }
 
-export const Counter = ({ counter, setCounter }: CounterProps) => {
-  const handleIncreaseCounter = () => {
-    setCounter((prevState) => {
-      return prevState + 1
-    })
-  }
-
-  const handleDecreaseCounter = () => {
-    if (counter > 1) {
-      setCounter((prevState) => {
-        return prevState - 1
-      })
-    }
-  }
-
+export const Counter = ({ value, incrementor, decrementor }: CounterProps) => {
   return (
     <CounterContainer>
-      <button type="button" onClick={handleIncreaseCounter}>
+      <button type="button" onClick={incrementor}>
         <Plus size={14} weight="bold" />
       </button>
       <input
         type="number"
         min={1}
-        value={counter}
-        onChange={() => console.log(counter)}
+        value={value}
+        onChange={() => console.log(value)}
       />
-      <button type="button" onClick={handleDecreaseCounter}>
+      <button type="button" onClick={decrementor}>
         <Minus size={14} weight="bold" />
       </button>
     </CounterContainer>

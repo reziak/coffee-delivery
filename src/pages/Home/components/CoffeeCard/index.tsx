@@ -16,6 +16,20 @@ export const CoffeeCard = ({ coffee }: CoffeeCardProps) => {
   const [counter, setCounter] = useState(1)
   const { addItemToCart } = useContext(CartContext)
 
+  const handleIncreaseCounter = () => {
+    setCounter((prevState) => {
+      return prevState + 1
+    })
+  }
+
+  const handleDecreaseCounter = () => {
+    if (counter > 1) {
+      setCounter((prevState) => {
+        return prevState - 1
+      })
+    }
+  }
+
   const handleAddItemToCart = () => {
     const newItem = {
       id: coffee.id,
@@ -42,7 +56,11 @@ export const CoffeeCard = ({ coffee }: CoffeeCardProps) => {
         <p>
           R$ <span>{formatPriceWithoutCurrency(coffee.price)}</span>
         </p>
-        <Counter counter={counter} setCounter={setCounter} />
+        <Counter
+          value={counter}
+          incrementor={handleIncreaseCounter}
+          decrementor={handleDecreaseCounter}
+        />
         <button type="button" onClick={handleAddItemToCart}>
           <ShoppingCart size={22} weight="fill" />
         </button>

@@ -5,7 +5,7 @@ import { Counter } from '../../../../components/Counter'
 import { CartContext } from '../../../../contexts/CartContext'
 
 import { OrderItemContainer } from './styles'
-import { formatPriceWithoutCurrency } from '../../../../utils/formatPriceWithoutCurrency'
+import { formatPriceWithCurrency } from '../../../../utils/formatPriceWithCurrency'
 
 interface OrderItemType {
   id: number
@@ -20,12 +20,8 @@ interface OrderItemProps {
 }
 
 export const OrderItem = ({ item }: OrderItemProps) => {
-  const [counter, setCounter] = useState(item.quantity)
-  const { updateItemQuantity, removeItemFromCart } = useContext(CartContext)
-
-  useEffect(() => {
-    updateItemQuantity(item.id, counter)
-  }, [item.id, counter, updateItemQuantity])
+  const { increaseItemQuantity, decreaseItemQuantity, removeItemFromCart } =
+    useContext(CartContext)
 
   const totalItemPrice = item.price * item.quantity
 
@@ -33,16 +29,27 @@ export const OrderItem = ({ item }: OrderItemProps) => {
     removeItemFromCart(item.id)
   }
 
+  const handleIncreaseItemQuantity = () => {
+    increaseItemQuantity(item.id)
+  }
+
+  const handleDecreaseItemQuantity = () => {
+    decreaseItemQuantity(item.id)
+  }
+
   return (
     <OrderItemContainer>
       <img src={item.imageUrl} alt="" />
       <div>
         <p>
-          {item.name}{' '}
-          <strong>{`R$ ${formatPriceWithoutCurrency(totalItemPrice)}`}</strong>
+          {item.name} <strong>{formatPriceWithCurrency(totalItemPrice)}</strong>
         </p>
         <div>
-          <Counter counter={counter} setCounter={setCounter} />
+          <Counter
+            value={item.quantity}
+            incrementor={handleIncreaseItemQuantity}
+            decrementor={handleDecreaseItemQuantity}
+          />
           <button type="button" onClick={handleRemoveItemFromCart}>
             <Trash size={16} />
             Remover

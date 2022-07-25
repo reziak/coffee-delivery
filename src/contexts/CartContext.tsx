@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useState } from 'react'
 
-interface CoffeeOrder {
+export interface CoffeeOrder {
   id: number
   name: string
   price: number
@@ -10,11 +10,15 @@ interface CoffeeOrder {
 
 interface CartContextType {
   items: CoffeeOrder[]
+  deliveryFee: number
   totalItems: number
   totalItemsPrice: number
+  totalOrderPrice: number
   addItemToCart: (item: CoffeeOrder) => void
-  updateItemQuantity: (id: number, quantity: number) => void
   removeItemFromCart: (id: number) => void
+  increaseItemQuantity: (id: number) => void
+  decreaseItemQuantity: (id: number) => void
+  clearCart: () => void
 }
 
 export const CartContext = createContext({} as CartContextType)
@@ -34,6 +38,10 @@ export const CartContextProvider = ({ children }: CartContextProviderProps) => {
     return acc + item.price * item.quantity
   }, 0)
 
+  const deliveryFee = items.length > 0 ? 3.5 : 0
+
+  const totalOrderPrice = totalItemsPrice + deliveryFee
+
   const addItemToCart = (item: CoffeeOrder) => {
     setItems((prevState) => {
       const existingItem = prevState.findIndex((i) => i.id === item.id)
@@ -47,11 +55,22 @@ export const CartContextProvider = ({ children }: CartContextProviderProps) => {
     })
   }
 
-  const updateItemQuantity = (id: number, quantity: number) => {
+  const increaseItemQuantity = (id: number) => {
     setItems((prevState) => {
       return prevState.map((i) => {
         if (i.id === id) {
-          return { ...i, quantity }
+          return { ...i, quantity: i.quantity + 1 }
+        }
+        return i
+      })
+    })
+  }
+
+  const decreaseItemQuantity = (id: number) => {
+    setItems((prevState) => {
+      return prevState.map((i) => {
+        if (i.id === id) {
+          return { ...i, quantity: i.quantity - 1 }
         }
         return i
       })
@@ -66,15 +85,23 @@ export const CartContextProvider = ({ children }: CartContextProviderProps) => {
     })
   }
 
+  const clearCart = () => {
+    setItems([])
+  }
+
   return (
     <CartContext.Provider
       value={{
         items,
+        deliveryFee,
         totalItems,
         addItemToCart,
-        updateItemQuantity,
-        removeItemFromCart,
         totalItemsPrice,
+        totalOrderPrice,
+        increaseItemQuantity,
+        decreaseItemQuantity,
+        removeItemFromCart,
+        clearCart,
       }}
     >
       {children}
