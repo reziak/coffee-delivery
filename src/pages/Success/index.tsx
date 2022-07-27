@@ -21,7 +21,7 @@ const payment = {
 export const Success = () => {
   const { order } = useContext(OrderContext)
 
-  if (!order.client) {
+  if (!order.client.zipCode) {
     return <Navigate to="/" />
   } else {
     return (

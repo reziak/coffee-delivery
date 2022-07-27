@@ -1,17 +1,7 @@
-import { createContext, ReactNode, useState } from 'react'
-
-import { CoffeeOrder } from './CartContext'
-
-interface ClientData {
-  zipCode: string
-  address: string
-  buildingNumber: string
-  address2?: string | null
-  neighborhood: string
-  city: string
-  state: string
-  paymentOption: 'credit' | 'debit' | 'money' | null
-}
+import { createContext, ReactNode, useReducer } from 'react'
+import { CoffeeOrder } from '../reducers/cart/reducer'
+import { addNewOrderAction } from '../reducers/order/actions'
+import { ClientData, orderReducer } from '../reducers/order/reducer'
 
 interface Order {
   client: ClientData
@@ -33,10 +23,14 @@ interface OrderContextProviderProps {
 export const OrderContextProvider = ({
   children,
 }: OrderContextProviderProps) => {
-  const [order, setOrder] = useState<Order>({} as Order)
+  const [order, dispatch] = useReducer(orderReducer, {
+    client: {},
+    items: [],
+    totalOrderPrice: 0,
+  })
 
   const createNewOrder = (data: Order) => {
-    setOrder(data)
+    dispatch(addNewOrderAction(data))
   }
 
   return (

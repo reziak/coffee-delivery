@@ -1,12 +1,12 @@
-import { createContext, ReactNode, useState } from 'react'
-
-export interface CoffeeOrder {
-  id: number
-  name: string
-  price: number
-  quantity: number
-  imageUrl: string
-}
+import { createContext, ReactNode, useReducer } from 'react'
+import {
+  addNewItemAction,
+  clearCartAction,
+  decreaseItemAction,
+  increaseItemAction,
+  removeItemAction,
+} from '../reducers/cart/actions'
+import { cartReducer, CoffeeOrder } from '../reducers/cart/reducer'
 
 interface CartContextType {
   items: CoffeeOrder[]
@@ -27,8 +27,10 @@ interface CartContextProviderProps {
   children: ReactNode
 }
 
+const initialCartState = [] as CoffeeOrder[]
+
 export const CartContextProvider = ({ children }: CartContextProviderProps) => {
-  const [items, setItems] = useState<CoffeeOrder[]>([])
+  const [items, dispatch] = useReducer(cartReducer, initialCartState)
 
   const totalItems = items.reduce((acc, item) => {
     return acc + item.quantity
@@ -43,50 +45,23 @@ export const CartContextProvider = ({ children }: CartContextProviderProps) => {
   const totalOrderPrice = totalItemsPrice + deliveryFee
 
   const addItemToCart = (item: CoffeeOrder) => {
-    setItems((prevState) => {
-      const existingItem = prevState.findIndex((i) => i.id === item.id)
-
-      if (existingItem !== -1) {
-        prevState[existingItem].quantity = item.quantity
-        return [...prevState]
-      }
-
-      return [...prevState, item]
-    })
+    dispatch(addNewItemAction(item))
   }
 
   const increaseItemQuantity = (id: number) => {
-    setItems((prevState) => {
-      return prevState.map((i) => {
-        if (i.id === id) {
-          return { ...i, quantity: i.quantity + 1 }
-        }
-        return i
-      })
-    })
+    dispatch(increaseItemAction(id))
   }
 
   const decreaseItemQuantity = (id: number) => {
-    setItems((prevState) => {
-      return prevState.map((i) => {
-        if (i.id === id) {
-          return { ...i, quantity: i.quantity - 1 }
-        }
-        return i
-      })
-    })
+    dispatch(decreaseItemAction(id))
   }
 
   const removeItemFromCart = (id: number) => {
-    setItems((prevState) => {
-      return prevState.filter((i) => {
-        return i.id !== id
-      })
-    })
+    dispatch(removeItemAction(id))
   }
 
   const clearCart = () => {
-    setItems([])
+    dispatch(clearCartAction())
   }
 
   return (
