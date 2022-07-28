@@ -70,6 +70,7 @@ export const CartContextProvider = ({ children }: CartContextProviderProps) => {
 
   const clearCart = () => {
     dispatch(clearCartAction())
+    localStorage.removeItem('@coffee-delivery:cart-state-1.0.0')
   }
 
   useEffect(() => {
